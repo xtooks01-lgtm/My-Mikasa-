@@ -9,6 +9,7 @@ interface SyncTabProps {
 
 export const SyncTab: React.FC<SyncTabProps> = ({ activities, onPulse }) => {
   const [pulsing, setPulsing] = useState(false);
+  const currentUser = localStorage.getItem('sanctuary_user');
 
   const triggerPulse = () => {
     if (pulsing) return;
@@ -20,13 +21,12 @@ export const SyncTab: React.FC<SyncTabProps> = ({ activities, onPulse }) => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <header className="space-y-2">
-        <h2 className="text-[10px] font-bold text-pink-300 uppercase tracking-[0.3em]">Connection Center</h2>
+        <h2 className="text-[10px] font-bold text-pink-300 uppercase tracking-[0.3em]">Connection</h2>
         <h1 className="text-2xl text-gray-800 font-semibold">Shared Heartbeat</h1>
       </header>
 
       <div className="flex flex-col items-center justify-center py-10 space-y-8">
         <div className="relative">
-          {/* Animated concentric circles */}
           <div className={`absolute inset-0 bg-pink-400 rounded-full opacity-20 scale-100 ${pulsing ? 'animate-ping' : ''}`}></div>
           <div className={`absolute inset-0 bg-pink-200 rounded-full opacity-40 scale-125 transition-all duration-1000 ${pulsing ? 'opacity-0 scale-150' : ''}`}></div>
           
@@ -39,26 +39,42 @@ export const SyncTab: React.FC<SyncTabProps> = ({ activities, onPulse }) => {
         </div>
         
         <div className="text-center space-y-2">
-          <p className="text-gray-700 font-medium">Tap to send a Pulse</p>
-          <p className="text-xs text-gray-400 max-w-[200px] mx-auto">It lets Ann Mariya know you're thinking of her right this second.</p>
+          <p className="text-gray-700 font-medium italic">"Sending warmth your way..."</p>
+          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Tap to send a heartbeat</p>
         </div>
       </div>
 
       <section className="space-y-4">
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Detailed Log</h3>
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Quiet Signals</h3>
         <div className="bg-white/40 rounded-[2rem] border border-pink-100 p-2 overflow-hidden">
-          <div className="max-h-[300px] overflow-y-auto space-y-2 p-2">
-            {activities.map((act) => (
-              <div key={act.id} className="flex justify-between items-center p-3 hover:bg-white/40 rounded-xl transition-colors">
-                <div className="flex items-center space-x-3">
-                  <span className="text-xs">{act.type === 'pulse' ? '💓' : '🔘'}</span>
-                  <span className="text-[12px] text-gray-600 font-medium">{act.detail}</span>
-                </div>
-                <span className="text-[9px] text-pink-300 font-bold whitespace-nowrap">
-                  {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
+          <div className="max-h-[300px] overflow-y-auto space-y-2 p-2 scroll-smooth">
+            {activities.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="text-[10px] text-pink-200 uppercase tracking-widest">Awaiting the first beat...</p>
               </div>
-            ))}
+            ) : (
+              activities.map((act) => (
+                <div key={act.id} className="flex justify-between items-center p-3 hover:bg-white/40 rounded-xl transition-colors group">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xs">{act.type === 'pulse' ? '💓' : '🔘'}</span>
+                    <div className="flex flex-col">
+                      <span className={`text-[11px] font-bold uppercase tracking-tighter ${act.author === 'Ann Mariya' ? 'text-pink-500' : 'text-purple-500'}`}>
+                        {act.author === currentUser ? 'You' : act.author}
+                      </span>
+                      <span className="text-[12px] text-gray-500 font-medium leading-none mt-0.5">{act.detail}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[9px] text-pink-300 font-bold">
+                      {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    {act.seen && (
+                      <span className="text-[7px] text-pink-400 font-black uppercase tracking-tighter">Seen</span>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 
 export enum AppState {
+  IDENTITY = 'IDENTITY',
   SPLASH = 'SPLASH',
   PROPOSAL = 'PROPOSAL',
   ROMANTIC_ACCEPT = 'ROMANTIC_ACCEPT',
@@ -8,11 +9,25 @@ export enum AppState {
   DASHBOARD = 'DASHBOARD'
 }
 
-export type TabType = 'home' | 'chat' | 'vision' | 'journal' | 'sync';
+export type UserType = 'Eren Yeager' | 'Ann Mariya';
+
+export type ThemeType = 'pink' | 'lavender' | 'mint' | 'sky' | 'peach' | 'golden';
+
+export type TabType = 'home' | 'journal' | 'sync';
+
+export interface JournalEntry {
+  id: string;
+  author: UserType;
+  content: string;
+  timestamp: number;
+  seen: boolean;
+}
 
 export interface ActivityEvent {
   id: string;
-  type: 'vision' | 'chat' | 'mood' | 'pulse';
+  type: 'mood' | 'pulse';
+  author: UserType;
   detail: string;
   timestamp: number;
+  seen: boolean;
 }
